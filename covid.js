@@ -1,9 +1,8 @@
 window.onload = function(){
     getAllStatesCovid(); 
-    loadHtml(); 
 }
 
-async function getAllStatesCovid(){
+async function getAllStatesCovid() {
     const response = await fetch("https://covid-19-data.p.rapidapi.com/report/country/name?name=USA&date=2020-04-01", {
         "method": "GET",
         "headers": {
@@ -17,12 +16,17 @@ async function getAllStatesCovid(){
         provinces = element.provinces;
     });
     provinces.forEach(element => {
-        console.log(element); 
+        console.log(element);
+        var province = element.province;
+        var confirmedCases = element.confirmed;
+        var deaths = element.deaths;
+
+        loadCovidStateCard(province, confirmedCases, deaths);
     });
 }
 
-function loadHtml(){
-    const parent = document.getElementById("section"); 
+function loadCovidStateCard(province, confirmedCases, deaths){
+    const parent = document.getElementById("states"); 
     console.log(parent); 
 
     var card = document.createElement("div"); 
@@ -35,15 +39,15 @@ function loadHtml(){
 
     var hFive = document.createElement("h5"); 
     hFive.className = "card-title"; 
-    hFive.innerHTML = "Card Title"; 
+    hFive.innerHTML = province; 
 
     var hSix = document.createElement("h6"); 
     hSix.className = "card-subtitle mb-2 text-muted"
-    hSix.innerHTML = "Card Subtitle"
+    hSix.innerHTML = "Confirmed Cases: " + confirmedCases;
 
     var paragraph = document.createElement("p"); 
     paragraph.className = "card-text"; 
-    paragraph.innerText = "Some quick example text to build on the card title and make up the bulk of the card's content."
+    paragraph.innerText = "Deaths Reported: " + deaths;
 
     var linkOne = document.createElement("a"); 
     linkOne.className = "card-link";
@@ -62,6 +66,77 @@ function loadHtml(){
     cardBody.appendChild(paragraph); 
     cardBody.appendChild(linkOne); 
     cardBody.appendChild(linkTwo); 
-    
-
 }
+
+//easy pagination
+var current_page = 1;
+var records_per_page = 5;
+
+var objJson = [
+    { adName: "AdName 1"},
+    { adName: "AdName 2"},
+    { adName: "AdName 3"},
+    { adName: "AdName 4"},
+    { adName: "AdName 5"},
+    { adName: "AdName 6"},
+    { adName: "AdName 7"},
+    { adName: "AdName 8"},
+    { adName: "AdName 9"},
+    { adName: "AdName 10"}
+]; // Can be obtained from another source, such as your objJson variable
+
+function prevPage()
+{
+    if (current_page > 1) {
+        current_page--;
+        changePage(current_page);
+    }
+}
+
+function nextPage()
+{
+    if (current_page < numPages()) {
+        current_page++;
+        changePage(current_page);
+    }
+}
+    
+function changePage(page)
+{
+    var btn_next = document.getElementById("btn_next");
+    var btn_prev = document.getElementById("btn_prev");
+    var listing_table = document.getElementById("listingTable");
+    var page_span = document.getElementById("page");
+ 
+    // Validate page
+    if (page < 1) page = 1;
+    if (page > numPages()) page = numPages();
+
+    listing_table.innerHTML = "";
+
+    for (var i = (page-1) * records_per_page; i < (page * records_per_page) && i < objJson.length; i++) {
+        listing_table.innerHTML += objJson[i].adName + "<br>";
+    }
+    page_span.innerHTML = page + "/" + numPages();
+
+    if (page == 1) {
+        btn_prev.style.visibility = "hidden";
+    } else {
+        btn_prev.style.visibility = "visible";
+    }
+
+    if (page == numPages()) {
+        btn_next.style.visibility = "hidden";
+    } else {
+        btn_next.style.visibility = "visible";
+    }
+}
+
+function numPages()
+{
+    return Math.ceil(objJson.length / records_per_page);
+}
+
+// window.onload = function() {
+//     changePage(1);
+// };
