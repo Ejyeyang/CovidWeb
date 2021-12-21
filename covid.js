@@ -1,3 +1,5 @@
+var listOfStates; 
+
 window.onload = function(){
     getAllStatesCovid(); 
 }
@@ -17,18 +19,18 @@ async function getAllStatesCovid() {
     });
     provinces.forEach(element => {
         console.log(element);
-        var province = element.province;
-        var confirmedCases = element.confirmed;
-        var deaths = element.deaths;
-
-        loadCovidStateCard(province, confirmedCases, deaths);
+        // var province = element.province;
+        // var confirmedCases = element.confirmed;
+        // var deaths = element.deaths;
+        // loadCovidStateCard(province, confirmedCases, deaths);
     });
+    listOfStates = provinces;
+    console.log(listOfStates);
 }
 
 function loadCovidStateCard(province, confirmedCases, deaths){
     const parent = document.getElementById("states"); 
-    console.log(parent); 
-
+    
     var card = document.createElement("div"); 
     card.className = "card"; 
     card.style = "width: 18rem;";
@@ -95,6 +97,7 @@ function prevPage()
 
 function nextPage()
 {
+    //console.log(numPages())
     if (current_page < numPages()) {
         current_page++;
         changePage(current_page);
@@ -105,7 +108,9 @@ function changePage(page)
 {
     var btn_next = document.getElementById("btn_next");
     var btn_prev = document.getElementById("btn_prev");
-    var listing_table = document.getElementById("listingTable");
+    //var listing_table = document.getElementById("listingTable");
+    var listing_table = document.getElementById("states");
+    
     var page_span = document.getElementById("page");
  
     // Validate page
@@ -114,8 +119,10 @@ function changePage(page)
 
     listing_table.innerHTML = "";
 
-    for (var i = (page-1) * records_per_page; i < (page * records_per_page) && i < objJson.length; i++) {
-        listing_table.innerHTML += objJson[i].adName + "<br>";
+    console.log(listOfStates);
+
+    for (var i = (page-1) * records_per_page; i < (page * records_per_page) && i < listOfStates.length; i++) {
+        listing_table.innerHTML += loadCovidStateCard(listOfStates[i].province, listOfStates[i].confirmed, listOfStates[i].deaths);
     }
     page_span.innerHTML = page + "/" + numPages();
 
@@ -134,7 +141,7 @@ function changePage(page)
 
 function numPages()
 {
-    return Math.ceil(objJson.length / records_per_page);
+    return Math.ceil(listOfStates.length / records_per_page);
 }
 
 // window.onload = function() {
